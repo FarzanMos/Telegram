@@ -120,14 +120,16 @@ public class RecordControl extends View implements FlashViews.Invertable {
     private static final long MAX_DURATION = 60 * 1000L;
     private long recordingStart;
     private long lastDuration;
+    private final boolean isAttachPicker;
 
     private final Path checkPath = new Path();
     private final Point check1 = new Point(-dpf2(29/3.0f), dpf2(7/3.0f));
     private final Point check2 = new Point(-dpf2(8.5f/3.0f), dpf2(26/3.0f));
     private final Point check3 = new Point(dpf2(29/3.0f), dpf2(-11/3.0f));
 
-    public RecordControl(Context context) {
+    public RecordControl(Context context, boolean isAttachPicker) {
         super(context);
+        this.isAttachPicker = isAttachPicker;
 
         setWillNotDraw(false);
 
@@ -434,7 +436,7 @@ public class RecordControl extends View implements FlashViews.Invertable {
 
         long duration = System.currentTimeMillis() - recordingStart;
         float recordEndT = recording ? 0 : 1f - recordingLongT;
-        float sweepAngle = duration / (float) MAX_DURATION * 360;
+        float sweepAngle = (duration % MAX_DURATION) / (float) MAX_DURATION * 360;
 
         float recordingLoading = this.recordingLoadingT.set(this.recordingLoading);
 
@@ -466,7 +468,7 @@ public class RecordControl extends View implements FlashViews.Invertable {
             if (duration / 1000L != lastDuration / 1000L) {
                 delegate.onVideoDuration(duration / 1000L);
             }
-            if (duration >= MAX_DURATION) {
+            if (duration >= MAX_DURATION && !isAttachPicker) {
                 post(() -> {
                     recording = false;
                     longpressRecording = false;
