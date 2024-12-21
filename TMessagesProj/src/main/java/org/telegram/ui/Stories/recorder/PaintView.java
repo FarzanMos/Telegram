@@ -280,6 +280,7 @@ public class PaintView extends SizeNotifierFrameLayoutPhoto implements IPhotoPai
     private File file;
     private boolean isVideo;
     private boolean isBot;
+    private boolean isAttachPicker;
     private boolean hasAudio;
     public ReactionsContainerLayout reactionLayout;
     ReactionWidgetEntityView reactionForEntity;
@@ -298,7 +299,7 @@ public class PaintView extends SizeNotifierFrameLayoutPhoto implements IPhotoPai
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    public PaintView(Context context, boolean fileFromGallery, File file, boolean isVideo, boolean isBot, StoryRecorder.WindowView parent, Activity activity, int currentAccount, Bitmap bitmap, Bitmap blurBitmap, Bitmap originalBitmap, int originalRotation, ArrayList<VideoEditedInfo.MediaEntity> entities, StoryEntry entry, int viewWidth, int viewHeight, MediaController.CropState cropState, Runnable onInit, BlurringShader.BlurManager blurManager, Theme.ResourcesProvider resourcesProvider, PreviewView.TextureViewHolder videoTextureHolder, PreviewView previewView) {
+    public PaintView(Context context, boolean fileFromGallery, File file, boolean isVideo, boolean isBot, StoryRecorder.WindowView parent, Activity activity, int currentAccount, Bitmap bitmap, Bitmap blurBitmap, Bitmap originalBitmap, int originalRotation, ArrayList<VideoEditedInfo.MediaEntity> entities, StoryEntry entry, int viewWidth, int viewHeight, MediaController.CropState cropState, Runnable onInit, BlurringShader.BlurManager blurManager, Theme.ResourcesProvider resourcesProvider, PreviewView.TextureViewHolder videoTextureHolder, PreviewView previewView, boolean isAttachPicker) {
         super(context, activity, true);
         setDelegate(this);
         this.blurManager = blurManager;
@@ -307,6 +308,7 @@ public class PaintView extends SizeNotifierFrameLayoutPhoto implements IPhotoPai
         this.file = file;
         this.isVideo = isVideo;
         this.isBot = isBot;
+        this.isAttachPicker = isAttachPicker;
         this.parent = parent;
         this.w = viewWidth;
         this.h = viewHeight;
@@ -1918,6 +1920,9 @@ public class PaintView extends SizeNotifierFrameLayoutPhoto implements IPhotoPai
 
             @Override
             public boolean canShowWidget(Integer widgetId) {
+                if (isAttachPicker) {
+                    return widgetId == WIDGET_PHOTO || widgetId == WIDGET_AUDIO || widgetId == WIDGET_LOCATION;
+                }
                 if (isBot) {
                     return widgetId == WIDGET_PHOTO;
                 }
